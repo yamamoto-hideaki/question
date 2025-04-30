@@ -148,7 +148,6 @@ function nextQuestion() {
         loadQuestion(currentQuestionIndex);
     } else {
         // 全問終了後の処理
-        // ここからバックエンドとの通信を削除し、フロントエンドで処理を完結させる
         let correctCount = 0;
         questions.forEach((question, index) => {
             if (question.type === 'radio') {
@@ -171,8 +170,10 @@ function nextQuestion() {
         });
         const percentage = (correctCount / questions.length) * 100;
         resultTextElement.textContent = `あなたの正解率は${percentage.toFixed(2)}%です。`;
-        quizForm.innerHTML = ''; // Clear the form
         resultContainer.style.display = 'block';
+        radioQuestionContainer.style.display = 'none';
+        checkboxQuestionContainer.style.display = 'none';
+        fillInQuestionContainer.style.display = 'none';
         nextButton.style.display = 'none';
     }
 }
@@ -198,3 +199,4 @@ fetch('questions.json')
         errorElement.textContent = '問題データの読み込みに失敗しました。';
         quizForm.appendChild(errorElement);
     });
+
