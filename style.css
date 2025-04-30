@@ -1,25 +1,122 @@
+/* 全体のスタイル */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6; /* 行間を調整して読みやすくする */
+}
+
+.container {
+    max-width: 800px; /* 最大幅を制限して中央に配置 */
+    margin: 20px auto; /* 上下のマージンを調整 */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px; /* 角を丸くする */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 影を付けて立体感を出す */
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px; /* 下マージンを追加 */
+    color: #4CAF50; /* ブランドカラー */
+}
+
+form {
+    margin-bottom: 20px; /* フォーム下マージン */
+}
+
+/* 質問コンテナのスタイル */
 .question-container {
     margin-bottom: 20px;
     padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    border: 1px solid #ddd; /* 薄い枠線 */
+    border-radius: 8px;
+    background-color: #f9f9f9; /* 薄い背景色 */
 }
 
-.question-container p{
+.question-container p {
     margin-bottom: 10px;
-    font-size: 1.1em;
+    font-size: 1.1em; /* フォントサイズを少し大きく */
+    color: #555;
 }
 
+/* ラジオボタンとチェックボックスのスタイル */
 .radio-option, .checkbox-option {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    display: flex; /* Flexboxを使用 */
+    align-items: center; /* 垂直方向に中央揃え */
 }
 
-input[type="radio"],
-input[type="checkbox"] {
-    margin-right: 5px;
+.radio-option input, .checkbox-option input {
+    margin-right: 10px; /* ラジオボタンとラベルの間のスペース */
 }
 
-label{
-    margin-right: 10px;
+.radio-option label, .checkbox-option label {
+    font-size: 1em;
+    color: #444;
+    cursor: pointer; /* カーソルをポインターに変更 */
+}
+
+/* 入力欄のスタイル */
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%; /* 幅を100%にしてコンテナに合わせる */
+    max-width: 400px; /* 最大幅を設定 */
+    margin-top: 10px;
+    font-size: 1em;
+}
+
+/* ボタンのスタイル */
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* ブランドカラー */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease; /* 滑らかな色の変化 */
+}
+
+button:hover {
+    background-color: #45a049; /* ホバー時の色 */
+}
+
+/* 結果表示のスタイル */
+#result-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+#result-container h2 {
+    color: #4CAF50; /* 結果タイトルの色 */
+    margin-bottom: 10px;
+}
+
+#result-container p {
+    font-size: 1.2em; /* 結果テキストを大きく */
+    font-weight: bold; /* 結果テキストを太字に */
+    color: #333;
+}
+
+#next-button {
+    margin-top: 20px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 10px; /* スマホではpaddingを小さく */
+    }
+    input[type="text"] {
+        max-width: 100%; /* スマホでは最大幅を100%にする */
+    }
 }
