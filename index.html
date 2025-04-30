@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>穴埋め検定</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>穴埋め検定</h1>
+        <form id="quiz-form">
+            <div id="radio-question-container" class="question-container" style="display: none;">
+                <p id="radio-question-text"></p>
+                <div id="radio-options-container">
+                    </div>
+                <p id="radio-feedback"></p>
+            </div>
+            <div id="checkbox-question-container" class="question-container" style="display: none;">
+                <p id="checkbox-question-text"></p>
+                <div id="checkbox-options-container">
+                    </div>
+                <p id="checkbox-feedback"></p>
+            </div>
+            <div id="fill-in-question-container" class="question-container" style="display: none;">
+                <p id="fill-in-question-text"></p>
+                <input type="text" id="fill-in-answer-input">
+                <p id="fill-in-feedback"></p>
+            </div>
+            <button type="button" id="submit-button">解答する</button>
+            <div id="result-container" style="display: none;">
+                <h2>結果</h2>
+                <p id="result-text"></p>
+                <button type="button" id="next-button">次の問題</button>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
