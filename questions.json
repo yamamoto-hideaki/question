@@ -1,74 +1,127 @@
 [
-  {
-      "type": "radio",
-      "question": "HTMLの要素は、開始タグと終了タグで囲まれています。終了タグはどの記号で開始しますか？",
-      "options": ["/", "*", "#", "!"],
-      "answer": "/"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、段落を定義するために使用するタグは何ですか？",
-      "options": ["<p>", "<h1>", "<div>", "<span>"],
-      "answer": "<p>"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、最も大きな見出しを定義するために使用するタグは何ですか？",
-      "options": ["<h1>", "<h2>", "<h3>", "<h4>"],
-      "answer": "<h1>"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、リンクを定義するために使用するタグは何ですか？",
-      "options": ["<a>", "<link>", "<url>", "<href>"],
-      "answer": "<a>"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、画像を表示するために使用するタグは何ですか？",
-      "options": ["<img>", "<picture>", "<src>", "<image>"],
-      "answer": "<img>"
-  },
-   {
-      "type": "radio",
-      "question": "HTMLで、順序なしリストを定義するために使用するタグは何ですか？",
-      "options": ["<ul>", "<ol>", "<li>", "<dl>"],
-      "answer": "<ul>"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、順序付きリストを定義するために使用するタグは何ですか？",
-      "options": ["<ul>", "<ol>", "<li>", "<dl>"],
-      "answer": "<ol>"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、テーブルを定義するために使用するタグは何ですか？",
-      "options": ["<table>", "<tr>", "<td>", "<th>"],
-      "answer": "<table>"
-  },
-  {
-      "type": "radio",
-      "question": "HTMLで、フォームを定義するために使用するタグは何ですか？",
-      "options": ["<form>", "<input>", "<button>", "<label>"],
-      "answer": "<form>"
-  },
-  {
-      "type": "radio",
-      "question": "HTML5で、動画を埋め込むために使用するタグは何ですか？",
-      "options": ["<video>", "<movie>", "<embed>", "<media>"],
-      "answer": "<video>"
-  },
-  {
-      "type": "checkbox",
-      "question": "HTMLで使用できる、テキストを装飾するタグをすべて選択してください。",
-      "options": ["<b>", "<em>", "<mark>", "<del>"],
-      "answer": ["<b>", "<em>", "<mark>", "<del>"]
-  },
-  {
-      "type": "checkbox",
-      "question": "HTML5で追加された、セクションを表すセマンティック要素をすべて選択してください。",
-      "options": ["<header>", "<nav>", "<section>", "<div>"],
-      "answer": ["<header>", "<nav>", "<section>"]
-  }
+    {
+        "type": "radio",
+        "question": "HTMLの要素は、開始タグと終了タグで囲まれています。終了タグはどの記号で開始しますか？",
+        "options": ["/", "*", "#", "!"],
+        "answer": "/"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、段落を定義するために使用するタグは何ですか？",
+        "options": ["<p>", "<h1>", "<div>", "<span>"],
+        "answer": "<p>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、最も大きな見出しを定義するために使用するタグは何ですか？",
+        "options": ["<h1>", "<h2>", "<h3>", "<h4>"],
+        "answer": "<h1>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、リンクを定義するために使用するタグは何ですか？",
+        "options": ["<a>", "<link>", "<url>", "<href>"],
+        "answer": "<a>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、画像を表示するために使用するタグは何ですか？",
+        "options": ["<img>", "<picture>", "<src>", "<image>"],
+        "answer": "<img>"
+    },
+     {
+        "type": "radio",
+        "question": "HTMLで、順序なしリストを定義するために使用するタグは何ですか？",
+        "options": ["<ul>", "<ol>", "<li>", "<dl>"],
+        "answer": "<ul>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、順序付きリストを定義するために使用するタグは何ですか？",
+        "options": ["<ul>", "<ol>", "<li>", "<dl>"],
+        "answer": "<ol>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、テーブルを定義するために使用するタグは何ですか？",
+        "options": ["<table>", "<tr>", "<td>", "<th>"],
+        "answer": "<table>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、フォームを定義するために使用するタグは何ですか？",
+        "options": ["<form>", "<input>", "<button>", "<label>"],
+        "answer": "<form>"
+    },
+    {
+        "type": "radio",
+        "question": "HTML5で、動画を埋め込むために使用するタグは何ですか？",
+        "options": ["<video>", "<movie>", "<embed>", "<media>"],
+        "answer": "<video>"
+    },
+    {
+        "type": "checkbox",
+        "question": "HTMLで使用できる、テキストを装飾するタグをすべて選択してください。",
+        "options": ["<b>", "<em>", "<mark>", "<del>"],
+        "answer": ["<b>", "<em>", "<mark>", "<del>"]
+    },
+    {
+        "type": "checkbox",
+        "question": "HTML5で追加された、セクションを表すセマンティック要素をすべて選択してください。",
+        "options": ["<header>", "<nav>", "<section>", "<div>"],
+        "answer": ["<header>", "<nav>", "<section>"]
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、ハイパーテキストを定義するために使用される略語は何ですか？",
+        "options": ["HTTP", "HTML", "CSS", "URL"],
+        "answer": "HTML"
+    },
+    {
+        "type": "radio",
+        "question": "次のHTMLコードの説明として正しいものを選びなさい。<br><code>&lt;img src=&quot;image.jpg&quot; alt=&quot;代替テキスト&quot;&gt;</code>",
+        "options": [
+            "画像を表示する",
+            "代替テキストを表示する",
+            "画像と代替テキストを同時に表示する",
+            "エラーが発生する"
+        ],
+        "answer": "画像を表示する"
+    },
+    {
+        "type": "checkbox",
+        "question": "HTMLのフォームで使用できる入力の種類をすべて選びなさい。",
+        "options": ["text", "radio", "checkbox", "image"],
+        "answer": ["text", "radio", "checkbox"]
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、CSSを記述するためのタグは何ですか？",
+        "options": ["<style>", "<script>", "<link>", "<css>"],
+        "answer": "<style>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、JavaScriptを記述するためのタグは何ですか？",
+        "options": ["<style>", "<script>", "<link>", "<js>"],
+        "answer": "<script>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、外部CSSファイルを読み込むためのタグは何ですか？",
+        "options": ["<style>", "<script>", "<link>", "<css>"],
+        "answer": "<link>"
+    },
+    {
+        "type": "radio",
+        "question": "HTMLで、Webページのタイトルを指定するためのタグは何ですか？",
+        "options": ["<title>", "<head>", "<header>", "<page>"],
+        "answer": "<title>"
+    },
+    {
+        "type": "radio",
+        "question": "HTML5で、Canvas APIを使用すると何ができますか？",
+        "options": ["ベクターグラフィックの描画", "ラスターグラフィックの描画", "3Dグラフィックの描画", "テキストの描画"],
+        "answer": "ラスターグラフィックの描画"
+    }
 ]
