@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRコード生成</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+      #qrcode-container {
+        margin-top: 20px;
+        text-align: center;
+      }
+      #qrcode-container canvas {
+        border: 1px solid #000;
+        display: block; /* canvas要素をブロック要素にする */
+        margin: 0 auto; /* 中央揃えにする場合 */
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QRコード生成</h1>
+        <label for="url-input">URL:</label>
+        <input type="text" id="url-input" value="https://yamamoto-hideaki.github.io/question/">
+        <button id="generate-qrcode">QRコードを生成</button>
+        <div id="qrcode-container">
+        </div>
+    </div>
+    <script>
+    const urlInput = document.getElementById('url-input');
+    const generateQrcodeButton = document.getElementById('generate-qrcode');
+    const qrcodeContainer = document.getElementById('qrcode-container');
+
+    generateQrcodeButton.addEventListener('click', () => {
+        const url = urlInput.value;
+        if (url) {
+            qrcodeContainer.innerHTML = ''; // Clear previous QR code
+            const qrcode = new QRCode(qrcodeContainer, { // Use qrcodeContainer
+                text: url,
+                width: 256,
+                height: 256,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+           console.log("QRコードが生成されました");
+        } else {
+            alert("URLを入力してください。");
+        }
+    });
+    </script>
+</body>
+</html>
