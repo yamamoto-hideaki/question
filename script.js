@@ -57,10 +57,11 @@ function loadQuestion(index) {
  */
 function loadRadioQuestion(index) {
     const currentQuestion = questions[index];
+    const options = shuffleArray([...currentQuestion.options]); // 選択肢の配列をシャッフル
     radioQuestionTextElement.textContent = currentQuestion.question;
     radioOptionsContainer.innerHTML = ''; // 選択肢をクリア
 
-    currentQuestion.options.forEach((option, i) => {
+    options.forEach((option, i) => {
         const radioOption = document.createElement('div');
         radioOption.className = 'radio-option';
         const input = document.createElement('input');
@@ -93,10 +94,11 @@ function loadRadioQuestion(index) {
  */
 function loadCheckboxQuestion(index) {
     const currentQuestion = questions[index];
+    const options = shuffleArray([...currentQuestion.options]); // 選択肢の配列をシャッフル
     checkboxQuestionTextElement.textContent = currentQuestion.question;
     checkboxOptionsContainer.innerHTML = ''; // 選択肢をクリア
 
-    currentQuestion.options.forEach((option, i) => {
+    options.forEach((option, i) => {
         const checkboxOption = document.createElement('div');
         checkboxOption.className = 'checkbox-option';
         const input = document.createElement('input');
@@ -186,12 +188,12 @@ function nextQuestion() {
  */
 function getCorrectAnswerText(question) {
     switch (question.type) {
-      case QUESTION_TYPE.RADIO:
-        return question.answer;
-      case QUESTION_TYPE.CHECKBOX:
-        return question.answer.join(', ');
-      default:
-        return '';
+        case QUESTION_TYPE.RADIO:
+            return question.answer;
+        case QUESTION_TYPE.CHECKBOX:
+            return question.answer.join(', ');
+        default:
+            return '';
     }
 }
 /**
@@ -250,6 +252,8 @@ function init() {
         .then(response => response.json())
         .then(data => {
             questions = data;
+            // 問題をランダムに並び替える
+            questions = shuffleArray(questions);
             if (questions.length > 0) {
                 loadQuestion(currentQuestionIndex); // 最初の問題をロード
             } else {
@@ -266,6 +270,24 @@ function init() {
         });
 }
 
+/**
+ * 配列をシャッフルする関数
+ * @param {Array} array - シャッフルする配列
+ * @returns {Array} - シャッフルされた配列
+ */
+function shuffleArray(array) {
+    let currentIndex = array.length, randomIndex;
+    // まだシャッフルされていない要素がある間繰り返す
+    while (currentIndex != 0) {
+        // 残っている要素からランダムなインデックスを選ぶ
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        // 現在の要素とランダムに選んだ要素を交換する
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+
 // ページのロードが完了したら初期化処理を実行
 window.onload = init;
-

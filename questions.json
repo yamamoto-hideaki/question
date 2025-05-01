@@ -1,24 +1,74 @@
 [
-    {
-      "type": "fill-in",
-      "question": "日本の[ ]は世界的に有名です。",
-      "answer": ["富士山"]
-    },
-    {
+  {
       "type": "radio",
-      "question": "次のうち、最も速い動物は何ですか？",
-      "options": ["チーター", "ライオン", "ゾウ", "キリン"],
-      "answer": "チーター"
-    },
-    {
+      "question": "HTMLの要素は、開始タグと終了タグで囲まれています。終了タグはどの記号で開始しますか？",
+      "options": ["/", "*", "#", "!"],
+      "answer": "/"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、段落を定義するために使用するタグは何ですか？",
+      "options": ["<p>", "<h1>", "<div>", "<span>"],
+      "answer": "<p>"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、最も大きな見出しを定義するために使用するタグは何ですか？",
+      "options": ["<h1>", "<h2>", "<h3>", "<h4>"],
+      "answer": "<h1>"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、リンクを定義するために使用するタグは何ですか？",
+      "options": ["<a>", "<link>", "<url>", "<href>"],
+      "answer": "<a>"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、画像を表示するために使用するタグは何ですか？",
+      "options": ["<img>", "<picture>", "<src>", "<image>"],
+      "answer": "<img>"
+  },
+   {
+      "type": "radio",
+      "question": "HTMLで、順序なしリストを定義するために使用するタグは何ですか？",
+      "options": ["<ul>", "<ol>", "<li>", "<dl>"],
+      "answer": "<ul>"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、順序付きリストを定義するために使用するタグは何ですか？",
+      "options": ["<ul>", "<ol>", "<li>", "<dl>"],
+      "answer": "<ol>"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、テーブルを定義するために使用するタグは何ですか？",
+      "options": ["<table>", "<tr>", "<td>", "<th>"],
+      "answer": "<table>"
+  },
+  {
+      "type": "radio",
+      "question": "HTMLで、フォームを定義するために使用するタグは何ですか？",
+      "options": ["<form>", "<input>", "<button>", "<label>"],
+      "answer": "<form>"
+  },
+  {
+      "type": "radio",
+      "question": "HTML5で、動画を埋め込むために使用するタグは何ですか？",
+      "options": ["<video>", "<movie>", "<embed>", "<media>"],
+      "answer": "<video>"
+  },
+  {
       "type": "checkbox",
-      "question": "次のうち、三大栄養素を全て選択してください。",
-      "options": ["炭水化物", "ビタミン", "脂質", "ミネラル", "タンパク質"],
-      "answer": ["炭水化物", "脂質", "タンパク質"]
-    },
-    {
-      "type": "fill-in",
-      "question": "プログラミング言語[ ]は、ウェブ開発で広く使われています。",
-      "answer": ["JavaScript"]
-    }
-  ]
+      "question": "HTMLで使用できる、テキストを装飾するタグをすべて選択してください。",
+      "options": ["<b>", "<em>", "<mark>", "<del>"],
+      "answer": ["<b>", "<em>", "<mark>", "<del>"]
+  },
+  {
+      "type": "checkbox",
+      "question": "HTML5で追加された、セクションを表すセマンティック要素をすべて選択してください。",
+      "options": ["<header>", "<nav>", "<section>", "<div>"],
+      "answer": ["<header>", "<nav>", "<section>"]
+  }
+]
