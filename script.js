@@ -1,5 +1,12 @@
 let questions = []; // 問題データを格納する配列
-let currentQuestionIndex = 0; // 現在の問題のインデックス
+let currentQuestionIndex = 0; // 現在の問題のインデックス (0から始まる)
+let userAnswers = {}; // ユーザーの回答を保存するオブジェクト (キー: 問題インデックス, 値: ユーザーの回答)
+let questionResults = {}; // 各問題の正誤結果を保存するオブジェクト (キー: 問題インデックス, 値: boolean - trueなら正解)
+
+// --- 設定 ---
+const POINTS_PER_QUESTION = 5; // 1問あたりの点数
+const PASSING_SCORE = 80;      // 合格点
+// -------------
 
 /**
  * DOM要素のキャッシュ
@@ -9,16 +16,16 @@ const quizForm = document.getElementById('quiz-form');
 const radioQuestionContainer = document.getElementById('radio-question-container');
 const radioQuestionTextElement = document.getElementById('radio-question-text');
 const radioOptionsContainer = document.getElementById('radio-options-container');
-const radioFeedback = document.getElementById('radio-feedback');
+const radioFeedback = document.getElementById('radio-feedback'); // 各問題ごとのフィードバックは表示しないが要素は残しておく
 const checkboxQuestionContainer = document.getElementById('checkbox-question-container');
 const checkboxQuestionTextElement = document.getElementById('checkbox-question-text');
 const checkboxOptionsContainer = document.getElementById('checkbox-options-container');
-const checkboxFeedback = document.getElementById('checkbox-feedback');
+const checkboxFeedback = document.getElementById('checkbox-feedback'); // 各問題ごとのフィードバックは表示しないが要素は残しておく
 const submitButton = document.getElementById('submit-button');
 const resultContainer = document.getElementById('result-container');
 const resultTextElement = document.getElementById('result-text');
-const nextButton = document.getElementById('next-button');
-let userAnswers = {}; // ユーザーの回答を保存するオブジェクト
+const nextButton = document.getElementById('next-button'); // 全問終了後に表示（今回は非表示に修正）
+const progressDisplayElement = document.getElementById('progress-display'); // 進行状況表示用の要素
 
 /**
  * 質問タイプを定数で管理
@@ -31,41 +38,63 @@ const QUESTION_TYPE = {
 
 /**
  * 質問を表示する関数
- * @param {number} index - 表示する質問のインデックス
+ * @param {number} index - 表示する質問のインデックス (0から始まる)
  */
 function loadQuestion(index) {
+    // 問題インデックスが有効範囲外の場合は処理を中断
+    if (index < 0 || index >= questions.length) {
+        console.error('エラー: 無効な問題インデックスです。', index);
+        resultTextElement.textContent = '問題の表示に問題が発生しました。'; // ユーザー向けエラー表示
+        resultContainer.style.display = 'block';
+        submitButton.style.display = 'none';
+        nextButton.style.display = 'none'; // 次へボタンも非表示
+        progressDisplayElement.textContent = ''; // 進行状況もクリア
+        return;
+    }
+
     const currentQuestion = questions[index];
     hideAllQuestionContainers(); // すべての質問コンテナを非表示にする
     resultContainer.style.display = 'none'; // 結果表示も非表示にする
     submitButton.style.display = 'block'; // 解答ボタンを表示
+    nextButton.style.display = 'none'; // 次へボタンは非表示 (全問終了まで)
     clearFeedbackMessages(); // フィードバックメッセージをクリア
+
+    // 進行状況を更新 (例: 1/20)
+    updateProgressDisplay();
+
 
     switch (currentQuestion.type) {
         case QUESTION_TYPE.RADIO:
-            loadRadioQuestion(index);
+            loadRadioQuestionContent(currentQuestion); // 内容表示処理を分離
+            radioQuestionContainer.style.display = 'block';
             break;
         case QUESTION_TYPE.CHECKBOX:
-            loadCheckboxQuestion(index);
+            loadCheckboxQuestionContent(currentQuestion); // 内容表示処理を分離
+            checkboxQuestionContainer.style.display = 'block';
             break;
         // case QUESTION_TYPE.FILL_IN: // もし穴埋め問題を追加するなら
-        //     loadFillInQuestion(index);
+        //     loadFillInQuestionContent(currentQuestion);
+        //     fillInQuestionContainer.style.display = 'block';
         //     break;
         default:
-            console.error('不明な質問タイプです:', currentQuestion.type); // エラーハンドリング
-            // 不明なタイプの場合、エラーメッセージを表示するなどユーザーへの通知を追加検討
+            console.error('エラー: 不明な質問タイプです。', currentQuestion.type);
+            resultTextElement.textContent = '問題の表示に問題が発生しました。'; // ユーザー向けエラー表示
+            resultContainer.style.display = 'block';
+            submitButton.style.display = 'none';
+            progressDisplayElement.textContent = ''; // 進行状況もクリア
     }
+
+    // 以前の回答の選択状態を復元（必要であれば）
+    // 今回は正誤判定のみ記録するため、回答自体の表示は復元しない
 }
 
 /**
- * ラジオボタン形式の質問を表示する関数
- * @param {number} index - 表示する質問のインデックス
+ * ラジオボタン形式の質問内容を表示する関数
+ * @param {object} question - 質問オブジェクト
  */
-function loadRadioQuestion(index) {
-    const currentQuestion = questions[index];
-    // 選択肢の配列をシャッフル（元の配列を直接変更しないようにコピーしてから）
-    const options = shuffleArray([...currentQuestion.options]);
-    // 質問テキストをinnerHTMLで設定し、HTMLタグを解釈させる
-    radioQuestionTextElement.innerHTML = currentQuestion.question; // ★修正箇所★
+function loadRadioQuestionContent(question) {
+    const options = shuffleArray([...question.options]); // 選択肢の配列をシャッフル
+    radioQuestionTextElement.innerHTML = question.question; // HTMLタグを解釈させる
     radioOptionsContainer.innerHTML = ''; // 選択肢をクリア
 
     options.forEach((option, i) => {
@@ -83,29 +112,15 @@ function loadRadioQuestion(index) {
         radioOption.appendChild(label);
         radioOptionsContainer.appendChild(radioOption);
     });
-
-    radioQuestionContainer.style.display = 'block'; // ラジオボタンコンテナを表示
-
-    // 以前の回答を復元
-    if (userAnswers[index] !== undefined) {
-        // userAnswers[index] はラジオボタンの場合は単一の値
-        const selectedOption = document.querySelector(`input[type="radio"][value="${userAnswers[index]}"]`);
-        if (selectedOption) {
-            selectedOption.checked = true;
-        }
-    }
 }
 
 /**
- * チェックボックス形式の質問を表示する関数
- * @param {number} index - 表示する質問のインデックス
+ * チェックボックス形式の質問内容を表示する関数
+ * @param {object} question - 質問オブジェクト
  */
-function loadCheckboxQuestion(index) {
-    const currentQuestion = questions[index];
-    // 選択肢の配列をシャッフル（元の配列を直接変更しないようにコピーしてから）
-    const options = shuffleArray([...currentQuestion.options]);
-     // 質問テキストをinnerHTMLで設定し、HTMLタグを解釈させる
-    checkboxQuestionTextElement.innerHTML = currentQuestion.question; // ★修正箇所★
+function loadCheckboxQuestionContent(question) {
+    const options = shuffleArray([...question.options]); // 選択肢の配列をシャッフル
+    checkboxQuestionTextElement.innerHTML = question.question; // HTMLタグを解釈させる
     checkboxOptionsContainer.innerHTML = ''; // 選択肢をクリア
 
     options.forEach((option, i) => {
@@ -123,100 +138,166 @@ function loadCheckboxQuestion(index) {
         checkboxOption.appendChild(label);
         checkboxOptionsContainer.appendChild(checkboxOption);
     });
-
-    checkboxQuestionContainer.style.display = 'block'; // チェックボックスコンテナを表示
-
-    // 以前の回答を復元
-    if (userAnswers[index] !== undefined) {
-        // userAnswers[index] はチェックボックスの場合は配列
-        userAnswers[index].forEach(answer => {
-            const selectedCheckbox = document.querySelector(`input[type="checkbox"][value="${answer}"]`);
-            if (selectedCheckbox) {
-                selectedCheckbox.checked = true;
-            }
-        });
-    }
 }
 
+
 /**
- * 解答をチェックする関数
+ * 解答をチェックし、正誤を記録して次の問題へ進む関数
  */
 function checkAnswer() {
     const currentQuestion = questions[currentQuestionIndex];
     let isCorrect = false; // 正解かどうかを判定する変数
-    let feedbackMessage = ''; // フィードバックメッセージ
+    let userAnswer = undefined; // ユーザーの回答を一時的に保持
+
+    // フィードバックメッセージをクリア
+    clearFeedbackMessages();
 
     switch (currentQuestion.type) {
         case QUESTION_TYPE.RADIO:
             const selectedRadioOption = document.querySelector('input[name="radio-option"]:checked');
             if (selectedRadioOption) {
-                userAnswers[currentQuestionIndex] = selectedRadioOption.value; // ユーザーの回答を保存
+                userAnswer = selectedRadioOption.value;
                 isCorrect = selectedRadioOption.value === currentQuestion.answer;
-                feedbackMessage = isCorrect ? '正解！' : `不正解。正解は「${getCorrectAnswerText(currentQuestion)}」です。`;
-                radioFeedback.textContent = feedbackMessage; // フィードバックを表示
             } else {
-                feedbackMessage = '解答を選択してください。';
-                radioFeedback.textContent = feedbackMessage; // フィードバックを表示
+                // ラジオボタンで解答が選択されていない場合のみフィードバックを表示
+                radioFeedback.textContent = '解答を選択してください。';
                 return; // 解答がない場合はここで処理を終了
             }
             break;
         case QUESTION_TYPE.CHECKBOX:
             const selectedCheckboxOptions = Array.from(document.querySelectorAll('input[name="checkbox-option"]:checked'))
                 .map(checkbox => checkbox.value);
-            userAnswers[currentQuestionIndex] = selectedCheckboxOptions; // ユーザーの回答を保存
+            userAnswer = selectedCheckboxOptions;
             const correctAnswer = currentQuestion.answer; // 正解の配列
             // 選択された数と内容が完全に一致するかを判定
             isCorrect = selectedCheckboxOptions.length === correctAnswer.length &&
                 selectedCheckboxOptions.every(option => correctAnswer.includes(option));
-            feedbackMessage = isCorrect ? '正解！' : `不正解。正解は「${getCorrectAnswerText(currentQuestion)}」です。`;
-            checkboxFeedback.textContent = feedbackMessage; // フィードバックを表示
+
+            // チェックボックスで何も選択されていない場合の考慮
+            // 正解が空配列の場合は何も選択されていなければ正解、それ以外は不正解
+            if (selectedCheckboxOptions.length === 0) {
+                 isCorrect = (correctAnswer.length === 0);
+            }
+
             break;
         // case QUESTION_TYPE.FILL_IN: // もし穴埋め問題を追加するなら
         //     const fillInInput = document.getElementById('fill-in-answer-input');
-        //     const userAnswer = fillInInput.value.trim(); // 前後の空白を除去
-        //     userAnswers[currentQuestionIndex] = userAnswer; // ユーザーの回答を保存
+        //     userAnswer = fillInInput.value.trim(); // 前後の空白を除去
         //     isCorrect = userAnswer === currentQuestion.answer;
-        //     feedbackMessage = isCorrect ? '正解！' : `不正解。正解は「${currentQuestion.answer}」です。`;
-        //     document.getElementById('fill-in-feedback').textContent = feedbackMessage; // フィードバックを表示
+        //     // 穴埋め問題で空欄の場合の考慮
+        //     if (userAnswer === '' && currentQuestion.answer !== '') {
+        //          isCorrect = false; // 正解があるのに空欄なら不正解
+        //     } else if (userAnswer !== '' && currentQuestion.answer === '') {
+        //          isCorrect = false; // 正解が空なのに何か入力されていれば不正解
+        //     } else if (userAnswer === '' && currentQuestion.answer === '') {
+        //          isCorrect = true; // 正解も空で入力も空なら正解
+        //     }
         //     break;
         default:
-            console.error('不明な質問タイプです:', currentQuestion.type); // エラーハンドリング
-            feedbackMessage = '質問タイプの判定に問題が発生しました。';
-            // 適切なフィードバック要素にメッセージを表示することを検討
-            return;
+            console.error('エラー: 不明な質問タイプです。', currentQuestion.type);
+            // 不明なタイプの場合、ユーザーへの通知を追加検討
+            return; // 不明なタイプの場合は処理を終了
     }
 
-    // 結果表示コンテナの制御
-    if (isCorrect) {
-        resultTextElement.textContent = '正解！';
-    } else {
-         resultTextElement.textContent = `不正解。正解は「${getCorrectAnswerText(currentQuestion)}」です。`;
-    }
+    // ユーザーの回答と正誤結果を保存
+    userAnswers[currentQuestionIndex] = userAnswer;
+    questionResults[currentQuestionIndex] = isCorrect;
 
-    submitButton.style.display = 'none'; // 解答ボタンを非表示
-    resultContainer.style.display = 'block'; // 結果表示コンテナを表示
-}
+    // 各問題ごとのフィードバック表示はしない
+    // 解答を受け付けたメッセージも表示しない
 
-/**
- * 次の問題へ進む関数
- */
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
+    // 次の問題へ進む、または全問終了処理へ
+    if (currentQuestionIndex < questions.length - 1) {
+        // 次の問題がある場合
+        currentQuestionIndex++; // インデックスをインクリメント
         loadQuestion(currentQuestionIndex); // 次の問題をロード
     } else {
-        // 全問終了後の処理
-        const percentage = calculatePercentage(); // 正解率を計算
-        resultTextElement.textContent = `全問終了！あなたの正解率は${percentage.toFixed(2)}%です。`;
-        resultContainer.style.display = 'block'; // 結果表示を維持
-        hideAllQuestionContainers(); // 問題コンテナを非表示
-        nextButton.style.display = 'none'; // 次へボタンを非表示
-        submitButton.style.display = 'none'; // 解答ボタンも非表示に
+        // 全問終了の場合
+        displayFinalResult(); // 最終結果を表示
     }
 }
 
 /**
- * 正解のテキストを取得する関数
+ * 進行状況表示を更新する関数
+ */
+function updateProgressDisplay() {
+    // 現在の問題番号 (1から始まる) / 全問題数
+    progressDisplayElement.textContent = `問題 ${currentQuestionIndex + 1} / ${questions.length}`;
+
+    // もし「・・〇・・＋・・・・10・・・・＋・・・・20」のような表示にするなら、
+    // ここでより複雑なDOM操作や文字列生成を行う必要があります。
+    // 例:
+    // let progressString = '';
+    // for (let i = 0; i < questions.length; i++) {
+    //     if (i in questionResults) { // 解答済みの問題
+    //          progressString += questionResults[i] ? '〇' : '×'; // 正誤に応じてマークを変える
+    //     } else if (i === currentQuestionIndex) {
+    //         progressString += '●'; // 現在の問題
+    //     } else {
+    //         progressString += '・'; // 未解答
+    //     }
+    //     if ((i + 1) % 10 === 0 && i < questions.length - 1) { // 10問ごとに区切り
+    //         progressString += '＋';
+    //     }
+    // }
+    // progressDisplayElement.textContent = progressString;
+}
+
+
+/**
+ * 全問終了後に最終結果（合計点と合否）を表示する関数
+ */
+function displayFinalResult() {
+    const correctCount = getCorrectAnswerCount(); // 正解数を取得
+    const totalScore = correctCount * POINTS_PER_QUESTION; // 合計点を計算
+    const totalQuestions = questions.length; // 問題数
+    const totalPossibleScore = totalQuestions * POINTS_PER_QUESTION; // 満点
+
+    // 合否判定
+    const isPassed = totalScore >= PASSING_SCORE;
+
+    // 結果メッセージを作成
+    let finalMessage = `全問終了！\n`;
+    finalMessage += `あなたの得点: ${totalScore}点 / ${totalPossibleScore}点\n`;
+    finalMessage += `合否: ${isPassed ? '合格' : '不合格'}`;
+
+    // 結果表示コンテナにメッセージを設定
+    resultTextElement.textContent = finalMessage; // textContentで改行も反映される
+
+    resultContainer.style.display = 'block'; // 結果表示を維持
+    hideAllQuestionContainers(); // 問題コンテナを非表示
+    submitButton.style.display = 'none'; // 解答ボタンも非表示に
+    // nextButton.style.display = 'block'; // 全問終了後のみ「次へ」ボタンを表示（再開用などを想定） - この行を削除またはコメントアウト
+    nextButton.style.display = 'none'; // 最終結果画面では「次へ」ボタンを非表示にする ★修正箇所★
+
+
+    // 進行状況表示を最終結果表示中は非表示にするか、完了を示す表示にするか検討
+    progressDisplayElement.textContent = `完了 (${totalQuestions}問中)`; // 例: 完了 (20問中)
+}
+
+
+/**
+ * 正解の数を計算する関数
+ * @returns {number} - 正解した問題の数
+ */
+function getCorrectAnswerCount() {
+    let correctCount = 0;
+    // questionResults オブジェクトを反復処理し、true の数を数える
+    // questionResultsは問題インデックスをキーとするオブジェクト
+    for (const index in questionResults) {
+        // hasOwnPropertyでプロトタイプチェーン上のプロパティを除外
+        if (Object.hasOwnProperty.call(questionResults, index)) {
+            if (questionResults[index] === true) {
+                correctCount++;
+            }
+        }
+    }
+    return correctCount;
+}
+
+
+/**
+ * 正解のテキストを取得する関数 (今回はユーザーには表示しないが、内部処理やデバッグ用に保持)
  * @param {object} question - 質問オブジェクト
  * @returns {string} - 正解のテキスト
  */
@@ -225,51 +306,14 @@ function getCorrectAnswerText(question) {
         case QUESTION_TYPE.RADIO:
             return question.answer; // ラジオボタンの正解は単一の値
         case QUESTION_TYPE.CHECKBOX:
-            return question.answer.join(', '); // チェックボックスの正解は配列をカンマ区切り文字列に
+            // チェックボックスの正解は配列をカンマ区切り文字列に
+            // 正解が空配列の場合は「なし」と表示するなど、表示形式を調整しても良い
+            return question.answer.join(', ');
         // case QUESTION_TYPE.FILL_IN: // もし穴埋め問題を追加するなら
         //     return question.answer;
         default:
             return ''; // 不明なタイプの場合は空文字列
     }
-}
-
-/**
- * 正解率を計算する関数
- * @returns {number} - 正解率 (0から100)
- */
-function calculatePercentage() {
-    let correctCount = 0;
-    questions.forEach((question, index) => {
-        // ユーザーが回答している問題のみを対象とする
-        if (userAnswers[index] !== undefined) {
-            switch (question.type) {
-                case QUESTION_TYPE.RADIO:
-                    if (userAnswers[index] === question.answer) {
-                        correctCount++;
-                    }
-                    break;
-                case QUESTION_TYPE.CHECKBOX:
-                    const selectedOptions = userAnswers[index]; // ユーザーの回答 (配列)
-                    const correctAnswer = question.answer; // 正解 (配列)
-                    // 選択された数と内容が完全に一致する場合に正解
-                    if (selectedOptions.length === correctAnswer.length &&
-                        selectedOptions.every(option => correctAnswer.includes(option))) {
-                        correctCount++;
-                    }
-                    break;
-                // case QUESTION_TYPE.FILL_IN: // もし穴埋め問題を追加するなら
-                //     if (userAnswers[index] === question.answer) {
-                //         correctCount++;
-                //     }
-                //     break;
-            }
-        }
-    });
-     // 問題数が0の場合は正解率も0とする（エラー回避）
-    if (questions.length === 0) {
-        return 0;
-    }
-    return (correctCount / questions.length) * 100;
 }
 
 /**
@@ -299,7 +343,9 @@ function clearFeedbackMessages() {
  */
 function setupEventListeners() {
     submitButton.addEventListener('click', checkAnswer); // 解答ボタンにイベントリスナーを設定
-    nextButton.addEventListener('click', nextQuestion); // 次へボタンにイベントリスナーを設定
+    // nextButtonは最終結果表示後に表示されるが、今回は機能を持たせないためイベントリスナーは設定しない
+    // もし「最初からやり直す」などの機能をつけたい場合は、別途イベントリスナーを設定
+    // nextButton.addEventListener('click', restartQuiz); // 例: リスタート機能を追加する場合
 }
 
 /**
@@ -314,7 +360,8 @@ function init() {
         .then(response => {
             // レスポンスが正常かどうかを確認
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // エラーメッセージを日本語化
+                throw new Error(`HTTPエラー! ステータス: ${response.status}`);
             }
             return response.json(); // JSONとしてパース
         })
@@ -322,23 +369,29 @@ function init() {
             questions = data; // 取得したデータをquestions配列に格納
             // 問題をランダムに並び替える
             questions = shuffleArray(questions);
+            // userAnswersとquestionResultsを問題数に合わせて初期化（任意だが明示的）
+            // questions.forEach((_, index) => { userAnswers[index] = undefined; questionResults[index] = undefined; });
+
             if (questions.length > 0) {
+                currentQuestionIndex = 0; // 最初の問題インデックスを0に設定
                 loadQuestion(currentQuestionIndex); // 最初の問題をロード
             } else {
-                // 問題データが空の場合の処理
+                // 問題データが空の場合の処理を日本語化
                 const errorElement = document.createElement('p');
                 errorElement.textContent = '問題データがありません。questions.jsonファイルを確認してください。';
                 quizForm.appendChild(errorElement);
-                 submitButton.style.display = 'none'; // 問題がないのでボタンを非表示
+                submitButton.style.display = 'none'; // 問題がないのでボタンを非表示
+                progressDisplayElement.textContent = ''; // 進行状況もクリア
             }
         })
         .catch(error => {
-            // データ読み込み失敗時のエラーハンドリング
-            console.error('問題データの読み込みに失敗しました:', error);
+            // データ読み込み失敗時のエラーメッセージを日本語化
+            console.error('エラー: 問題データの読み込みに失敗しました。', error);
             const errorElement = document.createElement('p');
             errorElement.textContent = `問題データの読み込みに失敗しました。エラー: ${error.message}`;
             quizForm.appendChild(errorElement);
             submitButton.style.display = 'none'; // 問題が読み込めないのでボタンを非表示
+            progressDisplayElement.textContent = ''; // 進行状況もクリア
         });
 }
 
